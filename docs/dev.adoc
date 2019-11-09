@@ -591,7 +591,7 @@ _{More to be added in v2.0}_
 . Should not use any words deemed offensive to English speakers.
 
 
-_{More to be added}_
+_{More to be added in v2.0}_
 
 [appendix]
 == Glossary
@@ -604,23 +604,6 @@ Electronic Road Pricing
 
 [[psi]] PSI::
 Pollutant Standards Index
-
-[appendix]
-== Product Survey
-
-*Product Name*
-
-Author: ...
-
-Pros:
-
-* ...
-* ...
-
-Cons:
-
-* ...
-* ...
 
 [appendix]
 == Instructions for Manual Testing
@@ -638,27 +621,99 @@ These instructions only provide a starting point for testers to work on; testers
 .. Double-click the jar file +
    Expected: Shows the GUI with a set of sample contacts. The window size may not be optimum.
 
-. Saving window preferences
+. Loading sample data
 
-.. Resize the window to an optimum size. Move the window to a different location. Close the window.
+.. Put the jar file into an empty directory
 .. Re-launch the app by double-clicking the jar file. +
-   Expected: The most recent window size and location is retained.
+   Expected: Sample data should be displayed in the application on start up.
 
-_{ more test cases ... }_
+=== Setting up profile
 
-=== Deleting a person
+. Set up or change your current profile
 
-. Deleting a person while all persons are listed
+.. Test case: `profile Tom 25/12/1997` +
+   Expected: Profile to be updated. Name of user is now `Tom` and date of birth is now `25/12/1997`.
+   
+.. Test case: `profile Moo 21/12/9999` +
+   Expected: Profile is not updated. Error status is shown by SGTravel as date has yet to happen.
+   
+. Setting your hobbies
 
-.. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
+.. Test case: `profileSet arts true` +
+   Expected: Profile is updated and the user now likes arts.
+   
+.. Test case: `profileSet dance true` +
+   Expected: Pofile is not updated. Error invalid format status is shown by SGTravel as there are only 4 options to set currently: `arts, lifestyle, sports, entertainment`.
+
+=== Adding an event to your plans
+
+. Adding an event
+
+.. Prerequisites: List all events using the `list` command. There should be no `Bishan` within the list.
+
+.. Test case: `event Bishan between 24/02/24 and 26/02/24` +
+   Expected: Event is added to the list. Details of added event is shown by SGTravel.
+   
+.. Test case: `event Mxwglht between 05/04/28 and 07/04/28` +
+   Expected: Event is not added. Error details shown by SGTravel as location does not exist.
+   
+.. Test case: `event Prison between 30/04/18 and 06/05/19` +
+   Expected: Event is not added. Error details shown by SGTravel as dates are already in the past.
+   
+.. Other incorrect add commands to try: `event`, `event moo`, `event orchard between 20/09/29 and 25/09/28`, `event between and`, `event park between and`, `event park between Mon and`, `event park between and Mon` +
+   Expected: Similar to the previous
+
+=== Deleting an event from your plans
+
+. Deleting an event while all events are listed
+
+.. Prerequisites: List all events using the `list` command. Multiple events in the list.
+
 .. Test case: `delete 1` +
-   Expected: First contact is deleted from the list. Details of the deleted contact shown in the status message. Timestamp in the status bar is updated.
+   Expected: First event is deleted from the list. Details of the deleted event shown by SGTravel.
+   
 .. Test case: `delete 0` +
-   Expected: No person is deleted. Error details shown in the status message. Status bar remains the same.
-.. Other incorrect delete commands to try: `delete`, `delete x` (where x is larger than the list size) _{give more}_ +
+   Expected: No event is deleted. Error details shown by SGTravel.
+   
+.. Other incorrect delete commands to try: `delete`, `delete x` (where x is larger than the list size), `delete 999999999999999999999` (where 999999999999999999999 is larger than an `Integer`) +
    Expected: Similar to previous.
 
-_{ more test cases ... }_
+=== Searching bus routes
+
+. Searching for the route of a bus service
+
+.. Test case: `busRoute 96` +
+   Expected: Bus route of the bus service is shown by SGTravel.
+   
+.. Test case: `busRoute CS3243` +
+   Expected: No bus route is shown. Error details shown by SGTravel as there is no such bus service.
+   
+.. Other incorrect bus route commands to try: `busRoute boomboom`, `busRoute 1231231231231` +
+   Expected: Similar to previous
+   
+=== Recommend and adding travel plans
+
+. Recommend new itineraries for users to use as a travel plan
+
+.. Test case: `recommend itinerary between 21/04/20 and 25/04/20` +
+   Expected: A recommended holiday plan is shown by SGTravel.
+   
+.. Test case: `recommend itinerary between 19/06/19 and 24/06/19` +
+   Expected: No recommended holiday plan is shown. Error details shown by SGTravel as dates are already in the past.
+   
+.. Test case: `recommend itinerary between 21/04/20 and 25/09/20` +
+   Expected: No recommended holiday plan is shown. Error details shown by SGTravel as SGTravel is unable to come up with such a long travel plan.
+   
+   .. Other incorrect itinerary commands: `recommend between 21/04/20 and 25/09/20`, `recommend`, `recommend between and`, `recommend between`, `recommend and`, `recommend between and 12/12/21`, `recommend between 12/12/21 and` +
+   Expected: Similar to previous
+   
+.. Prerequisites: Have used the recommend command at least once successfully upon application start up. And must not have used the `addThisList` command previously.
+
+.. Test case: `addThisList myHolidayTrip` +
+   Expected: MyHolidayTrip is added to the list of itineraries. The details of the trip is shown by SGTravel.
+   
+.. Test case: `addThisList` +
+   Expected: No itineraries is added. Error details is shown by SGTravel as there is no name provided for the new itinerary.
 
 === Saving data
 
