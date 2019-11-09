@@ -301,11 +301,11 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 |`* * *` |user | Be able to put reminders for events |Remember my reservations/plans
 |`* *` |User |Be able to search for a destination by using a search bar |Can search for destinations before making a new request
 |`* *` |User |Be able to see taxis nearby my location |Quickly locate a ride
-|`* *` |Local |Be able to find information on parking spaces and ERP |Travel by car in the most cost effective way
+|`* *` |Local |Be able to find information on parking spaces and <<erp, ERP>> |Travel by car in the most cost effective way
 |`* *` |Tourist |Be able to see famous tourist destinations on a map |Plan where to travel
 |`* *` |User |Be able to learn about the weather forecast of the day/week |Be prepared while commuting
 |`* *` |Tourist |Be able to convert my home currency into Singaporean dollar / other currencies |I can view Singapore's currency value and other countries I may be connecting to
-|`* *` |Local |Be able to see the PSI index |Plan my activities to be indoors or outdoors
+|`* *` |Local |Be able to see the <<psi, PSI>> index |Plan my activities to be indoors or outdoors
 |`* *` |Tourist |Be able to see a list of hotels |Choose the best hotel
 |`* *` |User |Be able to choose my preferred mode of transportation 
 |Have it as my default option. While displaying destination request put preferred mode first
@@ -332,42 +332,264 @@ _{More to be added in v2.0}_
 [appendix]
 == Use Cases
 
-(For all use cases below, the *System* is the `AddressBook` and the *Actor* is the `user`, unless specified otherwise)
+(For all use cases below, the *System* is the `SGTravel` and the *Actor* is the `user`, unless specified otherwise)
 
 [discrete]
-=== Use case: Delete person
+=== Use case: See Usage Instructions
 
 *MSS*
 
-1.  User requests to list persons
-2.  AddressBook shows a list of persons
-3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+1. User requests to see instruction manual with the command `help`
+2. SGTravel shows a list of possible commands
+
 +
 Use case ends.
 
 *Extensions*
 
 [none]
-* 2a. The list is empty.
+* 1a. User input invalid.
++
+[none]
++
+** 1a1. SGTravel shows an error message “Enter help to see all possible commands”.
++
+Use case resumes at step 1.
+
+[discrete]
+=== Use case: New Destination Request
+
+*MSS*
+
+1. User selects new destination option.
+2. SGTravel asks for start and end location.
+3. User inputs start and end location.
+4. SGTravel shows the shortest path between 2 locations on a map.
+
 +
 Use case ends.
 
-* 3a. The given index is invalid.
+*Extensions*
+
+[none]
+* 3a. The user enters an invalid location
 +
 [none]
-** 3a1. AddressBook shows an error message.
++
+** 3a1. SGTravel shows an error message.
 +
 Use case resumes at step 2.
 
-_{More to be added}_
+[discrete]
+=== Use case: Filter Travel Paths on Constraints
+
+*MSS*
+
+1. User enters the `choose destination` mode
+2. SGTravel asks for start and end location.
+3. User inputs start and end location.
+4. User requests to filter travel paths with `filter:<constraint>` .
+5. SGTravel shows the filtered list. 
+6. User chooses the desired travel path based on the constraints
+7. SGTravel shows the travel path between 2 locations on a map.
+
++
+Use case ends.
+
+*Extensions*
+
+[none]
+* 3a. The given constraint is not valid
++
+[none]
++
+** 3a1. SGTravel shows an error message containing the valid constraint options.
++
+Use case resumes at step 2.
+[none]
+* *a. User request to exit choose destination mode
++
+[none]
++
+** SGTravel exit choose destination mode and goes back to home page.
+[none]
+* *b. User request to analysis the cost of current travel path
++
+[none]
++
+** SGTravel shows the cost of current travel path
+[none]
+* *c. User request to change the mode of transportation
++
+[none]
++
+** *c1. SGTravel shows the list of available transportation
+** *c2. User input the choice of transportation
+** *c3. SGTravel shows the path based on chosen transportation
+
+[discrete]
+=== Use case: Itinerary based on Days of Travel
+
+*MSS*
+
+1. User enters the create itinerary mode
+2. SGTravel request start and end date of the itinerary
+3. User Enters start and end date.
+4. SGTravel shows different options of itineraries
+5. SGTravel requests user to enter their choice
+6. User enters their choice of itinerary
+7. SGTravel saves this to the itineraries list to display on the dashboard
+
++
+Use case ends.
+
+*Extensions*
+
+[none]
+* 3a. The input is not valid
++
+[none]
++
+** 3a1. SGTravel shows invaild input error message.
++
+Use case resumes at step 2.
+[none]
+* 6a. The input is not valid
++
+[none]
++
+** 6a1. SGTravel shows invaild input error message.
++
+Use case resumes at step 5.
+[none]
+* *a. User request to exit create itinerary mode
++
+[none]
++
+** SGTravel exit’s create itinerary mode and goes back to home page.
+
+[discrete]
+=== Use case: Convert Currency
+
+*MSS*
+
+1. User enters the convert currency command.
+2. SGTravel shows all of the possible currencies to convert.
+3. SGTravel requests user to enter home currency and foreign currency.
+4. User enters home currency and foreign currency. 
+5. SGTravel requests to enter home currency amount. 
+6. User enters home currency amount.
+7. SGTravel shows the converted currency amount. 
+
++
+Use case ends.
+
+*Extensions*
+
+[none]
+* 4a. The input currency is not valid
++
+[none]
++
+** 4a1. SGTravel shows an error message.
++
+Use case resumes at step 2.
+[none]
+* 6a. The user input is invaild
++
+[none]
++
+** 6a1. SGTravel shows invaild error message.
++
+Use case resumes at step 5.
+[none]
+* *a. User request to exit convert currency
++
+[none]
++
+** SGTravel goes back to home page.
+
+[discrete]
+=== Use case: Flight Options 
+
+*MSS*
+
+1. User enters the flight option mode.
+2. SGTravel requests the user to enter the destination country.
+3. User enters destination country.
+4. SGTravel shows the user all of the flights sorted according to costs.
+5. User enters command to filter flights with “filter:<constraint> ” 6. (constraints based on for example : Airline type, Number of destination etc.) 
+6. SGTravel shows the filtered list of flight options.
+7. User enters preferred flight plan.
+8. SGTravel stores flight plan in memory to display on dashboard and notification center.
+
++
+Use case ends.
+
+*Extensions*
+
+[none]
+* 3a. The input destination is not valid
++
+[none]
++
+** 3a1. SGTravel shows an error message containing the valid country.
++
+Use case resumes at step 2.
+[none]
+* 5a. The given constraint is not valid
++
+[none]
++
+** 5a1. SGTravel shows an error message containing the valid constraint options.
++
+Use case resumes at step 4.
+
+[discrete]
+=== Use case: Check <<psi, PSI>> level
+
+*MSS*
+
+1. User request for <<psi, PSI>> Level
+2. SGTravel shows <<psi, PSI>> Level for past 24hr
+
++
+Use case ends.
+
+[discrete]
+=== Use case: Check weather forecast
+
+*MSS*
+
+1. User requests for weather forecast
+2. SGTravel shows weather forecast for the week
+
++
+Use case ends.
+
+*Extensions*
+
+[none]
+* *a. User requests for weather forecast with specific date
++
+[none]
++
+** SGTravel shows weather forecast for specific date
+
+
+_{More to be added in v2.0}_
 
 [appendix]
 == Non Functional Requirements
 
 .  Should work on any <<mainstream-os,mainstream OS>> as long as it has Java `11` or above installed.
-.  Should be able to hold up to 1000 persons without a noticeable sluggishness in performance for typical usage.
-.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
+.  Should be able to hold up to 1000 travel plans without a noticeable sluggishness in performance for typical usage.
+. A user with above average typing (65 wpm) speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most tasks faster using commands than using a mouse.
+. Should come with automated unit tests and open source code.
+. Should work on both 32-bit and 64-bit environments.
+. Should not exceed 200MB in size.
+. Should not use any words deemed offensive to English speakers.
+
 
 _{More to be added}_
 
@@ -377,8 +599,11 @@ _{More to be added}_
 [[mainstream-os]] Mainstream OS::
 Windows, Linux, Unix, OS-X
 
-[[private-contact-detail]] Private contact detail::
-A contact detail that is not meant to be shared with others
+[[erp]] ERP::
+Electronic Road Pricing
+
+[[psi]] PSI::
+Pollutant Standards Index
 
 [appendix]
 == Product Survey
