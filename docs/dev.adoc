@@ -7,12 +7,13 @@
 :imagesDir: images
 :stylesDir: stylesheets
 :xrefstyle: full
+:experimental:
 ifdef::env-github[]
 :tip-caption: :bulb:
-:note-caption: :information_source:
 :warning-caption: :warning:
+:note-caption: :information_source:
 endif::[]
-https://github.com/AY1920S1-CS2113T-W13-3/main
+:repoURL: https://github.com/AY1920S1-CS2113T-W13-3/main
 
 By: `Team SGTravel`      Since: `Aug 2019`      Licence: `MIT`
 
@@ -182,15 +183,44 @@ This section describes some noteworthy details on how certain features are imple
 .Sequence diagram of how user input is handled
 image::HandleUserInputDiagram.png[]
 
+Given below is an example usage scenario of how user input is handled:
+
 .  The user types in a command into the terminal, and clicks on the kbd:[Enter] button.
-.  This results in a `Command` object which is executed by the `LogicManager`.
-.  The command execution can affect the `Model` (e.g. adding an event).
-.  The result of the command execution is encapsulated as a `CommandResult` object which is passed back to the `Ui`.
-.  In addition, the `CommandResult` object can also instruct the `Ui` to perform certain actions, such as displaying calendar to the user.
+.  Upon button press, the text in the input is read, if it is non-empty, the application will echo back the user’s input.
+.  The `MainWindow` will then call `dukeResponse(input)`, which creates a thread using the `Platform` class.
+.  A `CommandResult` object is created, and `dukeShow(result)` is called using this object.
+.  If the result is of `CommandResultExit`, call `tryExitApp()`. Else if result is of `CommandResultCalender`, make a new `CalenderWindow` object with the result. Else if the result is of `CommandResultMap`, make a new `MapWindow` object.
+
+=== Parsing of user input into command
+
+==== Implementation
+
+.Sequence diagram of how user input is parsed into a command
+image::ParseCommandDiagram.png[]
+
+Given below is an example usage scenario of how user input is handled:
+
+.  If the input is identified as a single line command (e.g. `help`, `list`), the appropriate command is returned.
+.  Else, call `getCommandFromConversationManager(userInput)`, which will cause the `ConversationManager` to call `converse(userInput)`. 
+.  In `ConversationManager`, `converse(userInput)` will check for the presence of a `Conversation`, and process the given user input to see if it is what the `Conversation` wants. For example, a `isDateInput(userInput)` will check if the given user input is a date, whereas an `isIntInput(userInput)` will check to see if it is an `Integer`). If it matches, an appropriate prompt is returned as a message, and the appropriate fields of the conversation is updated.
+.  By checking if the `Conversation` in `ConversationManager` has ended, `parseComplexCommand(userInput)` will be called to try to parse the entire user input into a `Command`. Whereas if the `Conversation` has not ended, a `PromptCommand` is created by the `ConversationManager` using the `Conversation` and shown to the user.
+.  The `LogicManager` will then execute the `Command` and return a `CommandResult` to the `Ui`.
 
 ==== Design Considerations
 
-=== Parsing of user input into command
+===== Aspect: How to allow both Single and Multi-step commands
+* **Alternative 1 (current choice):** Using `ConversationManager` to "accumulate" user input first before passing to `LogicManager` as a single step command when the accumulation is ready.
+** Pros: No need to create new command classes.
+** Pros: Can use the same key word to trigger both the single and multi-step commands based o the context.
+** Pros: Does not block out single-step command even when the multi-step command is ongoing.
+** Cons: Challenging to implement, exceptions need to be handled carefully.
+* **Alternative 2:** Single and Multi-step commands are considered as different commands.
+** Pros: Easy to implement.
+** Cons: We cannot use the same keywords to trigger both the multi-step and single-step command.
+** Cons: There will be many different commands with overlapping code which violates DRY principle.
+** Cons: Blocks out other commands while multi-step command is triggered.
+
+=== Edit feature
 
 ==== Implementation
 
