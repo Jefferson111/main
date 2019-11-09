@@ -612,6 +612,8 @@ Given below are instructions to test the app manually.
 
 [NOTE]
 These instructions only provide a starting point for testers to work on; testers are expected to do more _exploratory_ testing.
+[NOTE]
+We also recommend testers to have a stable internet connection throughout the tests.
 
 === Launch and Shutdown
 
@@ -626,6 +628,13 @@ These instructions only provide a starting point for testers to work on; testers
 .. Put the jar file into an empty directory
 .. Re-launch the app by double-clicking the jar file. +
    Expected: Sample data should be displayed in the application on start up.
+   
+. Shutting down
+
+.. Prerequisites: Ensure that you are not in editing mode. Type `close` followed by the kbd:[enter] key to exit edit mode without saving.
+
+.. Type `bye` followed by the kbd:[enter] key
+.. Expected: Application should shut down.
 
 === Setting up profile
 
@@ -644,6 +653,20 @@ These instructions only provide a starting point for testers to work on; testers
    
 .. Test case: `profileSet dance true` +
    Expected: Pofile is not updated. Error invalid format status is shown by SGTravel as there are only 4 options to set currently: `arts, lifestyle, sports, entertainment`.
+   
+   
+=== Searching bus routes
+
+. Searching for the route of a bus service
+
+.. Test case: `busRoute 96` +
+   Expected: Bus route of the bus service is shown by SGTravel.
+   
+.. Test case: `busRoute CS3243` +
+   Expected: No bus route is shown. Error details shown by SGTravel as there is no such bus service.
+   
+.. Other incorrect bus route commands to try: `busRoute boomboom`, `busRoute 1231231231231` +
+   Expected: Similar to previous.
 
 === Adding an event to your plans
 
@@ -661,7 +684,7 @@ These instructions only provide a starting point for testers to work on; testers
    Expected: Event is not added. Error details shown by SGTravel as dates are already in the past.
    
 .. Other incorrect add commands to try: `event`, `event moo`, `event orchard between 20/09/29 and 25/09/28`, `event between and`, `event park between and`, `event park between Mon and`, `event park between and Mon` +
-   Expected: Similar to the previous
+   Expected: Similar to the previous.
 
 === Deleting an event from your plans
 
@@ -670,7 +693,7 @@ These instructions only provide a starting point for testers to work on; testers
 .. Prerequisites: List all events using the `list` command. Multiple events in the list.
 
 .. Test case: `delete 1` +
-   Expected: First event is deleted from the list. Details of the deleted event shown by SGTravel.
+   Expected: First event is deleted from the list. Details of the deleted event is shown by SGTravel.
    
 .. Test case: `delete 0` +
    Expected: No event is deleted. Error details shown by SGTravel.
@@ -678,19 +701,24 @@ These instructions only provide a starting point for testers to work on; testers
 .. Other incorrect delete commands to try: `delete`, `delete x` (where x is larger than the list size), `delete 999999999999999999999` (where 999999999999999999999 is larger than an `Integer`) +
    Expected: Similar to previous.
 
-=== Searching bus routes
+=== Editing an event in your plans
 
-. Searching for the route of a bus service
+. Editing and changing the information of the events.
 
-.. Test case: `busRoute 96` +
-   Expected: Bus route of the bus service is shown by SGTravel.
+.. Prerequisites: List all events using the `list` command. Multiple events in the list.
+
+.. Test case: `e 1 Changi 20/09/25 25/09/25` +
+   Expected: First event is edited from the list. Details of the new event is shown by SGTravel.
    
-.. Test case: `busRoute CS3243` +
-   Expected: No bus route is shown. Error details shown by SGTravel as there is no such bus service.
+.. Test case: `e 1 xxxxzwyx 09/08/28 10/08/28` +
+   Expected: No event is edited. Error details shown by SGTravel as there is no such location.
    
-.. Other incorrect bus route commands to try: `busRoute boomboom`, `busRoute 1231231231231` +
-   Expected: Similar to previous
+.. Test case: `e 0 Changi 20/09/25 25/09/25` +
+   Expected: No event is edited. Error details invalid format shown by SGTravel.
    
+.. Other incorrect delete commands to try: `e`, `e x Changi 20/09/25 25/09/25` (where x is larger than the list size), `e Changi Mon Wed`, `e 1 09/08/28 10/08/28` +
+   Expected: Similar to previous.
+
 === Recommend and adding travel plans
 
 . Recommend new itineraries for users to use as a travel plan
@@ -704,8 +732,8 @@ These instructions only provide a starting point for testers to work on; testers
 .. Test case: `recommend itinerary between 21/04/20 and 25/09/20` +
    Expected: No recommended holiday plan is shown. Error details shown by SGTravel as SGTravel is unable to come up with such a long travel plan.
    
-   .. Other incorrect itinerary commands: `recommend between 21/04/20 and 25/09/20`, `recommend`, `recommend between and`, `recommend between`, `recommend and`, `recommend between and 12/12/21`, `recommend between 12/12/21 and` +
-   Expected: Similar to previous
+   .. Other incorrect itinerary commands to try: `recommend between 21/04/20 and 25/09/20`, `recommend`, `recommend between and`, `recommend between`, `recommend and`, `recommend between and 12/12/21`, `recommend between 12/12/21 and` +
+   Expected: Similar to previous.
    
 .. Prerequisites: Have used the recommend command at least once successfully upon application start up. And must not have used the `addThisList` command previously.
 
@@ -714,11 +742,82 @@ These instructions only provide a starting point for testers to work on; testers
    
 .. Test case: `addThisList` +
    Expected: No itineraries is added. Error details is shown by SGTravel as there is no name provided for the new itinerary.
+   
+=== Adding routes
+
+. Add travelling routes for user to use whilst travelling
+
+.. Prerequisites: Must not add routes that has the same name as an existing one.
+
+.. Test case: `routeAdd NUS to NTU` +
+   Expected: Adds a route to the list of routes. The details of the route is shown by SGTravel.
+   
+.. Test case: `routeAdd` +
+   Exepcted: No routes is added. Error details is show by SGTravel as there is no name provided for the new route.
+   
+.. Prerequisites: List all routes using the `routeListAll` command. Multiples routes in the list. Must not add route node that is already existing in the route.
+
+.. Test case: `routeNodeAdd 1 1 at 17009 by bus` +
+   Expected: Route node is successfully added to the first route in the list. The location of the node is shown by SGTravel.
+   
+.. Test case: `routeNodeAdd 0 0 at 17009 by bus` +
+   Expected: No route node is added. Error details is shown by SGTravel.
+   
+.. Other incorrect add route commands to try: `routeNodeAdd x 1 at 17009 by bus` (where x is larger than the list size), `routeNodeAdd 1 1 at`, `routeNodeAdd 0`, `routeNodeAdd 1 1`, `routeNodeAdd 1 1 17009`, `routeNodeAdd 1 1 at 17009 by moo`, `routeNodeAdd 1 1 at by` +
+   Expected: Similar to previous.
+   
+   
+=== Deleting routes
+
+. Delete travelling routes while all routes are listed
+
+.. Prerequisites: List all routes using the routeListAll command. Multiples routes in the list.
+
+.. Test case: `routeDelete 1` +
+   Expected: First route is deleted from the list. Details of the deleted routes is shown by SGTravel.
+   
+.. Test case: `routeDelete 0` +
+   Expected: No route is deleted. Error details shown by SGTravel.
+   
+.. Other incorrect delete commands to try: `routeDelete mopi`, `routeDelete x` (where x is larger than the list size), `routeDelete 999999999999999999999` (where 999999999999999999999 is larger than an `Integer`) +
+   Expected: Similar to previous.
+   
+.. Prerequisites: List all routes using the `routeListAll` command. Multiples routes in the list. List all route nodes using `routeShow x` (where x is the index of the route) Listed routes must consist of multiple nodes.
+
+.. Test case: `routeNodeDelete 1 1` +
+   Expected: First route node of the first route node is deleted from the list. Details of the deleted node is shown by SGTravel.
+   
+.. Test case: `routeNodeDelete 0 1` +
+   Expected: No route is deleted. Error details shown by SGTravel.
+   
+.. Other incorrect delete commands to try: `routeNodeDelete vrift`, `routeNodeDelete 1 x` (where x is larger than the list size), `routeNodeDelete 1 999999999999999999999` (where 999999999999999999999 is larger than an `Integer`) +
+   Expected: Similar to previous.
+
 
 === Saving data
 
 . Dealing with missing/corrupted data files
 
-.. _{explain how to simulate a missing/corrupted file and the expected behavior}_
+.. Removing all `.txt` files in the same directory +
+.. Re-launch the app by double-clicking the jar file. +
+   Expected: All sample data should be displayed in the application on start up.
+   
+.. Removing or corrupting only the `profile.txt` files in the same directory +
+.. Re-launch the app by double-clicking the jar file. +
+   Expected: Sample profile and itinerary data should be loaded and the other contents still remain intact.
+   
+.. Removing or corrupting only the `events.txt` files in the same directory +
+.. Re-launch the app by double-clicking the jar file. +
+   Expected: All sample data should be displayed in the application on start up.
 
-_{ more test cases ... }_
+.. Removing or corrupting only the `routes.txt` files in the same directory +
+.. Re-launch the app by double-clicking the jar file. +
+   Expected: Sample itinerary data should be displayed in the application on start up.
+   
+.. Removing or corrupting only the `favourite.txt` files in the same directory +
+.. Re-launch the app by double-clicking the jar file. +
+   Expected: Sample itinerary data should be displayed in the application on start up.
+   
+.. Removing or corrupting only the `itineraries.txt` files in the same directory +
+.. Re-launch the app by double-clicking the jar file. +
+   Expected: Sample itinerary data should be displayed in the application on start up.
